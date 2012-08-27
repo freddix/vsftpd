@@ -1,0 +1,10 @@
+[Unit]
+Description=Vsftpd Server Socket
+
+[Socket]
+ListenStream=21
+Accept=yes
+
+[Install]
+WantedBy=sockets.target
+

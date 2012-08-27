@@ -1,0 +1,42 @@
+diff -aurN vsftpd-2.3.4.orig/vsftpd.conf vsftpd-2.3.4/vsftpd.conf
+--- vsftpd-2.3.4.orig/vsftpd.conf	2011-06-13 14:57:42.668652049 +0200
++++ vsftpd-2.3.4/vsftpd.conf	2011-06-13 15:06:57.014721767 +0200
+@@ -11,15 +11,18 @@
+ # Allow anonymous FTP? (Beware - allowed by default if you comment this out).
+ anonymous_enable=YES
+ #
++# Default path
++anon_root=/home/services/ftp
++#
+ # Uncomment this to allow local users to log in.
+-#local_enable=YES
++local_enable=YES
+ #
+ # Uncomment this to enable any form of FTP write command.
+ #write_enable=YES
+ #
+ # Default umask for local users is 077. You may wish to change this to 022,
+ # if your users expect that (022 is used by most other ftpd's)
+-#local_umask=022
++local_umask=022
+ #
+ # Uncomment this to allow the anonymous FTP user to upload files. This only
+ # has an effect if the above global write enable is activated. Also, you will
+@@ -52,7 +55,7 @@
+ #
+ # If you want, you can have your log file in standard ftpd xferlog format.
+ # Note that the default log file location is /var/log/xferlog in this case.
+-#xferlog_std_format=YES
++xferlog_std_format=YES
+ #
+ # You may change the default value for timing out an idle session.
+ #idle_session_timeout=600
+@@ -106,7 +109,7 @@
+ # When "listen" directive is enabled, vsftpd runs in standalone mode and
+ # listens on IPv4 sockets. This directive cannot be used in conjunction
+ # with the listen_ipv6 directive.
+-listen=YES
++#listen=YES
+ #
+ # This directive enables listening on IPv6 sockets. To listen on IPv4 and IPv6
+ # sockets, you must run two copies of vsftpd with two configuration files.

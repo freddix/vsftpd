@@ -1,0 +1,8 @@
+# man ftpusers
+auth       required    pam_listfile.so item=user sense=deny file=/etc/vsftpd/ftpusers onerr=succeed
+
+# Standard Un*x account and session
+account    include      common-account
+session    include      common-session
+auth       include      common-auth
+auth       required     pam_shells.so

@@ -1,0 +1,9 @@
+[Unit]
+Description=vsftpd Per-Connection Server
+
+[Service]
+ExecStart=-/usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf -obackground=NO -olisten=NO -olisten_ipv6=NO
+ExecReload=/usr/bin/systemctl kill -s HUP --kill-who=main vsftpd.socket
+StandardInput=socket
+StandardError=syslog
+

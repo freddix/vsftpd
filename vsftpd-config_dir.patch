@@ -1,0 +1,205 @@
+diff -aurN vsftpd-2.3.4.orig/Changelog vsftpd-2.3.4/Changelog
+--- vsftpd-2.3.4.orig/Changelog	2011-06-12 09:58:34.000000000 +0200
++++ vsftpd-2.3.4/Changelog	2011-06-12 10:01:31.000000000 +0200
+@@ -1159,7 +1159,7 @@
+ - Pull in a couple of minor tidyup patches from Openwall.
+ - Add "-o" command line option to specify option, e.g. vsftpd -olisten=NO. Also
+ respect ordering with respect config files, e.g.
+-vsftpd -olisten=NO /etc/vsftpd.conf -olocal_enable=NO
++vsftpd -olisten=NO /etc/vsftpd/vsftpd.conf -olocal_enable=NO
+ Inspiration from Solar / Openwall.
+ (vsftpd-2.2.0pre2)
+ - Revert listen to be "NO" by default and also set max_per_ip / max_clients
+diff -aurN vsftpd-2.3.4.orig/defs.h vsftpd-2.3.4/defs.h
+--- vsftpd-2.3.4.orig/defs.h	2011-06-12 09:58:34.000000000 +0200
++++ vsftpd-2.3.4/defs.h	2011-06-12 10:01:31.000000000 +0200
+@@ -1,7 +1,7 @@
+ #ifndef VSF_DEFS_H
+ #define VSF_DEFS_H
+ 
+-#define VSFTP_DEFAULT_CONFIG    "/etc/vsftpd.conf"
++#define VSFTP_DEFAULT_CONFIG    "/etc/vsftpd/vsftpd.conf"
+ 
+ #define VSFTP_COMMAND_FD        0
+ 
+diff -aurN vsftpd-2.3.4.orig/EXAMPLE/INTERNET_SITE_NOINETD/README vsftpd-2.3.4/EXAMPLE/INTERNET_SITE_NOINETD/README
+--- vsftpd-2.3.4.orig/EXAMPLE/INTERNET_SITE_NOINETD/README	2011-06-12 09:58:34.000000000 +0200
++++ vsftpd-2.3.4/EXAMPLE/INTERNET_SITE_NOINETD/README	2011-06-12 10:01:31.000000000 +0200
+@@ -17,7 +17,7 @@
+ 
+ To use this example config:
+ 
+-1) Copy the vsftpd.conf file in this directory to /etc/vsftpd.conf.
++1) Copy the vsftpd.conf file in this directory to /etc/vsftpd/vsftpd.conf.
+ 
+ 2) Start up vsftpd, e.g.
+ vsftpd &
+@@ -51,5 +51,5 @@
+ listen_address=192.168.1.2
+ 
+ And launch vsftpd with a specific config file like this:
+-vsftpd /etc/vsftpd.conf.site1 &
++vsftpd /etc/vsftpd/vsftpd.conf.site1 &
+ 
+diff -aurN vsftpd-2.3.4.orig/EXAMPLE/VIRTUAL_HOSTS/README vsftpd-2.3.4/EXAMPLE/VIRTUAL_HOSTS/README
+--- vsftpd-2.3.4.orig/EXAMPLE/VIRTUAL_HOSTS/README	2011-06-12 09:58:34.000000000 +0200
++++ vsftpd-2.3.4/EXAMPLE/VIRTUAL_HOSTS/README	2011-06-12 10:01:31.000000000 +0200
+@@ -43,7 +43,7 @@
+ 
+ This launches this FTP site with a different vsftpd configuration file.
+ 
+-cp /etc/vsftpd.conf /etc/vsftpd_site2.conf
++cp /etc/vsftpd/vsftpd.conf /etc/vsftpd_site2.conf
+ 
+ Add two lines:
+ ftp_username=ftp_site2
+diff -aurN vsftpd-2.3.4.orig/EXAMPLE/VIRTUAL_USERS_2/README vsftpd-2.3.4/EXAMPLE/VIRTUAL_USERS_2/README
+--- vsftpd-2.3.4.orig/EXAMPLE/VIRTUAL_USERS_2/README	2011-06-12 09:58:34.000000000 +0200
++++ vsftpd-2.3.4/EXAMPLE/VIRTUAL_USERS_2/README	2011-06-12 10:01:31.000000000 +0200
+@@ -15,7 +15,7 @@
+ Step 1) Activate per-user configurability.
+ 
+ To activate this powerful vsftpd feature, add the following to
+-/etc/vsftpd.conf:
++/etc/vsftpd/vsftpd.conf:
+ user_config_dir=/etc/vsftpd_user_conf
+ 
+ And, create this directory:
+@@ -39,7 +39,7 @@
+ Check it out - login as tom and now "ls" will return a directory listing!
+ Log in as fred and it won't.
+ NOTE - restart vsftpd to pick up the config setting changes to
+-/etc/vsftpd.conf. (Advanced users can send SIGHUP to the vsftpd listener
++/etc/vsftpd/vsftpd.conf. (Advanced users can send SIGHUP to the vsftpd listener
+ process).
+ 
+ 
+diff -aurN vsftpd-2.3.4.orig/FAQ vsftpd-2.3.4/FAQ
+--- vsftpd-2.3.4.orig/FAQ	2011-06-12 09:58:34.000000000 +0200
++++ vsftpd-2.3.4/FAQ	2011-06-12 10:01:31.000000000 +0200
+@@ -34,7 +34,7 @@
+ Q) Help! Local users cannot log in.
+ A) There are various possible problems.
+ A1) By default, vsftpd disables any logins other than anonymous logins. Put
+-local_enable=YES in your /etc/vsftpd.conf to allow local users to log in.
++local_enable=YES in your /etc/vsftpd/vsftpd.conf to allow local users to log in.
+ A2) vsftpd tries to link with PAM. (Run "ldd vsftpd" and look for libpam to
+ find out whether this has happened or not). If vsftpd links with PAM, then
+ you will need to have a PAM file installed for the vsftpd service. There is
+@@ -46,12 +46,12 @@
+ A4) If you are not using PAM, then vsftpd will do its own check for a valid
+ user shell in /etc/shells. You may need to disable this if you use an invalid
+ shell to disable logins other than FTP logins. Put check_shell=NO in your
+-/etc/vsftpd.conf.
++/etc/vsftpd/vsftpd.conf.
+ 
+ Q) Help! Uploads or other write commands give me "500 Unknown command.".
+ A) By default, write commands, including uploads and new directories, are
+ disabled. This is a security measure. To enable writes, put write_enable=YES
+-in your /etc/vsftpd.conf.
++in your /etc/vsftpd/vsftpd.conf.
+ 
+ Q) Help! What are the security implications referred to in the
+ "chroot_local_user" option?
+@@ -87,7 +87,7 @@
+ mode. Use "listen_address=x.x.x.x" to set the virtual IP.
+ 
+ Q) Help! Does vsftpd support virtual users?
+-A) Yes, via PAM integration. Set "guest_enable=YES" in /etc/vsftpd.conf. This
++A) Yes, via PAM integration. Set "guest_enable=YES" in /etc/vsftpd/vsftpd.conf. This
+ has the effect of mapping every non-anonymous successful login to the local
+ username specified in "guest_username". Then, use PAM and (e.g.) its pam_userdb
+ module to provide authentication against an external (i.e. non-/etc/passwd)
+@@ -153,7 +153,7 @@
+ users a lot.
+ A) Install the libcap-devel. This certainly affects Fedora.
+ 
+-Q) Help! I've put settings in /etc/vsftpd.conf, but they are not taking
++Q) Help! I've put settings in /etc/vsftpd/vsftpd.conf, but they are not taking
+ effect!
+ A) This is affecting some RedHat users - some RedHat versions put the config
+ file in /etc/vsftpd/vsftpd.conf.
+diff -aurN vsftpd-2.3.4.orig/INSTALL vsftpd-2.3.4/INSTALL
+--- vsftpd-2.3.4.orig/INSTALL	2011-06-12 09:58:34.000000000 +0200
++++ vsftpd-2.3.4/INSTALL	2011-06-12 10:01:31.000000000 +0200
+@@ -63,7 +63,7 @@
+ vsftpd can run standalone or via an inetd (such as inetd or xinetd). You will
+ typically get more control running vsftpd from an inetd. But first we will run
+ it without, so we can check things are going well so far.
+-Edit /etc/vsftpd.conf, and add this line at the bottom:
++Edit /etc/vsftpd/vsftpd.conf, and add this line at the bottom:
+ 
+ listen=YES
+ 
+@@ -135,9 +135,9 @@
+ Step 7) Customize your configuration
+ 
+ As well as the above three pre-requisites, you are recommended to install a
+-config file. The default location for the config file is /etc/vsftpd.conf.
++config file. The default location for the config file is /etc/vsftpd/vsftpd.conf.
+ There is a sample vsftpd.conf in the distribution tarball. You probably want
+-to copy that to /etc/vsftpd.conf as a basis for modification, i.e.:
++to copy that to /etc/vsftpd/vsftpd.conf as a basis for modification, i.e.:
+ 
+ cp vsftpd.conf /etc
+ 
+diff -aurN vsftpd-2.3.4.orig/vsftpd.8 vsftpd-2.3.4/vsftpd.8
+--- vsftpd-2.3.4.orig/vsftpd.8	2011-06-12 09:58:34.000000000 +0200
++++ vsftpd-2.3.4/vsftpd.8	2011-06-12 10:01:31.000000000 +0200
+@@ -21,7 +21,7 @@
+ recommended. It is activated by setting
+ .Pa listen=YES
+ in
+-.Pa /etc/vsftpd.conf .
++.Pa /etc/vsftpd/vsftpd.conf .
+ Direct execution of the
+ .Nm vsftpd
+ binary will then launch the FTP service ready for immediate client connections.
+@@ -33,7 +33,7 @@
+ as a config file that will be loaded. Note that config files are loaded in the
+ strict order that they are encountered on the command line.
+ If no config files are specified, the default configuration file of
+-.Pa /etc/vsftpd.conf
++.Pa /etc/vsftpd/vsftpd.conf
+ will be loaded, after all other command line options are processed.
+ .Pp
+ Supported options are:
+@@ -47,14 +47,14 @@
+ config files.
+ .El
+ .Sh EXAMPLES
+-vsftpd -olisten=NO /etc/vsftpd.conf -oftpd_banner=blah
++vsftpd -olisten=NO /etc/vsftpd/vsftpd.conf -oftpd_banner=blah
+ .Pp
+ That example overrides vsftpd's built-in default for the "listen" option to be
+-NO, but then loads /etc/vsftpd.conf which may override that setting. Finally,
++NO, but then loads /etc/vsftpd/vsftpd.conf which may override that setting. Finally,
+ the "ftpd_banner" setting is set to "blah", which overrides any default vsftpd
+ setting and any identical setting that was in the config file.
+ .Sh FILES
+-.Pa /etc/vsftpd.conf
++.Pa /etc/vsftpd/vsftpd.conf
+ .Sh SEE ALSO
+ .Xr vsftpd.conf 5
+ .end
+diff -aurN vsftpd-2.3.4.orig/vsftpd.conf vsftpd-2.3.4/vsftpd.conf
+--- vsftpd-2.3.4.orig/vsftpd.conf	2011-06-12 09:58:34.000000000 +0200
++++ vsftpd-2.3.4/vsftpd.conf	2011-06-12 10:01:31.000000000 +0200
+@@ -1,4 +1,4 @@
+-# Example config file /etc/vsftpd.conf
++# Example config file /etc/vsftpd/vsftpd.conf
+ #
+ # The default compiled in settings are fairly paranoid. This sample file
+ # loosens things up a bit, to make the ftp daemon more usable.
+diff -aurN vsftpd-2.3.4.orig/vsftpd.conf.5 vsftpd-2.3.4/vsftpd.conf.5
+--- vsftpd-2.3.4.orig/vsftpd.conf.5	2011-06-12 09:58:34.000000000 +0200
++++ vsftpd-2.3.4/vsftpd.conf.5	2011-06-12 10:01:31.000000000 +0200
+@@ -4,7 +4,7 @@
+ .SH DESCRIPTION
+ vsftpd.conf may be used to control various aspects of vsftpd's behaviour. By
+ default, vsftpd looks for this file at the location
+-.BR /etc/vsftpd.conf .
++.BR /etc/vsftpd/vsftpd.conf .
+ However, you may override this by specifying a command line argument to
+ vsftpd. The command line argument is the pathname of the configuration file
+ for vsftpd. This behaviour is useful because you may wish to use an advanced
