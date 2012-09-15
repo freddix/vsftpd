@@ -1,7 +1,7 @@
 Summary:	vsftpd - Very Secure FTP Daemon
 Name:		vsftpd
 Version:	3.0.0
-Release:	5
+Release:	6
 License:	GPL v2
 Group:		Daemons
 Source0:	https://security.appspot.com/downloads/%{name}-%{version}.tar.gz
@@ -71,7 +71,7 @@ rm -rf $RPM_BUILD_ROOT
 %systemd_preun %{name}.socket
 
 %postun
-%systemd_reload
+%systemd_postun
 
 %files
 %defattr(644,root,root,755)
